@@ -56,8 +56,6 @@ describe 'require'
       
       test_module.this_test.should.be_a Function
       test_module.this_test().should.equal "This is awesome!"
-      
-      window.test.should_not.equal "fail"
     end
   end
 end

@@ -4,6 +4,4 @@ exports.test = function() {
 
 this.this_test = function() {
   return "This is awesome!";
-}
-
-window.test = "fail";
+};
