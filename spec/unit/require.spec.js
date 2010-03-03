@@ -2,8 +2,7 @@ require.paths.push("http://localhost:8000/spec/fixtures/")
 
 describe 'require'
   before_each
-    require.moduleCache = {};
-    require.scriptCache = {};
+    require.clearCache();
   end
   
   it 'should be a function'
@@ -22,11 +21,13 @@ describe 'require'
   
   it 'should cache modules'
     var test_module = require('test_module')
+    var another_module = require('another_module')
     test_module.should.equal require('test_module')
   end
   
   it 'should cache scripts'
     require.fetch('test_module')
+    require.fetch('another_module')
     window.require.should_not.receive('fetch')
     require('test_module')
   end
@@ -42,6 +43,10 @@ describe 'require'
     
     it 'should throw an error when no valid identifier is passed'
       -{ require.fetch() }.should.throw_error "No valid identifier given. Must be a string."
+    end
+    
+    it 'should throw an error when an empty string is passed'
+      -{ require.fetch('') }.should.throw_error "Identifier is blank."
     end
     
     it 'should return the contents of the script'
@@ -72,6 +77,72 @@ describe 'require'
       
       test_module.this_test.should.be_a Function
       test_module.this_test().should.equal "This is awesome!"
+    end
+  end
+  
+  describe 'caching'
+    describe 'clearModuleCache'
+      it 'should remove all modules from cache'
+        var test_module = require('test_module')
+        var another_module = require('another_module')
+        require.clearModuleCache()
+        test_module.should_not.equal require('test_module')
+        another_module.should_not.equal require('another_module')
+      end
+      
+      describe 'with identifier'
+        it 'should remove specified module from cache'
+          var test_module = require('test_module')
+          var another_module = require('another_module')
+          require.clearModuleCache('test_module')
+          test_module.should_not.equal require('test_module')
+          another_module.should.equal require('another_module')
+        end
+      end
+    end
+
+    describe 'clearScriptCache'
+      it 'should remove all scripts from cache'
+        require.fetch('test_module')
+        require.fetch('another_module')
+        require.clearScriptCache()
+        window.require.should.receive('fetch', 'twice')
+        require('test_module')
+        require('another_module')
+      end
+      
+      describe 'with identifier'
+        it 'should remove specified script from cache'
+          require.fetch('test_module')
+          require.fetch('another_module')
+          require.clearScriptCache('test_module')
+          window.require.should.receive('fetch', 'once')
+          require('test_module')
+          require('another_module')
+        end
+      end
+    end
+
+    describe 'clearCache'
+      it 'should remove all scripts and modules from cache'
+        var test_module = require('test_module')
+        var another_module = require('another_module')
+        require.clearCache()
+        window.require.should.receive('fetch', 'twice')
+        test_module.should_not.equal require('test_module')
+        another_module.should_not.equal require('another_module')
+      end
+      
+      describe 'with identifier'
+        it 'should remove specified script and module from cache'
+          var test_module = require('test_module')
+          var another_module = require('another_module')
+          require.clearCache('test_module')
+          window.require.should.receive('fetch', 'once')
+          test_module.should_not.equal require('test_module')
+          another_module.should.equal require('another_module')
+        end
+      end
     end
   end
 end
