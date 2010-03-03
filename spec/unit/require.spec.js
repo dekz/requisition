@@ -1,18 +1,34 @@
 require.paths.push("http://localhost:8000/spec/fixtures/")
 
 describe 'require'
+  before_each
+    require.moduleCache = {};
+    require.scriptCache = {};
+  end
+  
   it 'should be a function'
     require.should.be_a Function
   end
   
   it 'should return the specified module'
-    test_module = require('test_module');
+    test_module = require('test_module')
     
     test_module.test.should.be_a Function
     test_module.test().should.equal "Hello World!"
     
     test_module.this_test.should.be_a Function
     test_module.this_test().should.equal "This is awesome!"
+  end
+  
+  it 'should cache modules'
+    var test_module = require('test_module')
+    test_module.should.equal require('test_module')
+  end
+  
+  it 'should cache scripts'
+    require.fetch('test_module')
+    window.require.should_not.receive('fetch')
+    require('test_module')
   end
   
   describe 'fetch'
