@@ -6,31 +6,41 @@ var sys = require('sys'),
     fs = require('fs');
 
 http.createServer(function (req, res) {
-  fs.readFile(__dirname + '/..' + req.url, 'binary', function(err, data) {
-    if (err) {
-      res.writeHeader(404, {});
-      res.close();
-    } else {
-      var mime;
-      var ext = req.url.match(/.*\.(.*)/)[1];
-      if (ext === 'js') {
-        mime = 'application/javascript';
-      }
-      if (ext === 'css') {
-        mime = 'text/css';
-      }
-      if (ext === 'png') {
-        mime = 'image/png';
-      }
-      if (ext === 'html') {
-        mime = 'text/html';
-      }
+  if (req.url == '/') {
+    var headers = {};
+    headers['content-type'] = 'text/plain';
+    headers['length'] = 0;
+    headers['location'] = '/spec/dom.html'
     
-      sys.puts('Serving ' + req.url + ' as ' + mime + ' because extension is ' + ext);
+    res.writeHeader(302, headers);
+    res.close();
+  } else {
+    fs.readFile(__dirname + '/..' + req.url, 'binary', function(err, data) {
+      if (err) {
+        res.writeHeader(404, {});
+        res.close();
+      } else {
+        var mime;
+        var ext = req.url.match(/.*\.(.*)/)[1];
+        if (ext === 'js') {
+          mime = 'application/javascript';
+        }
+        if (ext === 'css') {
+          mime = 'text/css';
+        }
+        if (ext === 'png') {
+          mime = 'image/png';
+        }
+        if (ext === 'html') {
+          mime = 'text/html';
+        }
     
-      res.writeHeader(200, {'content-type': mime});
-      res.write(data, 'binary');
-      res.close();
-    }
-  });
+        sys.puts('Serving ' + req.url + ' as ' + mime + ' because extension is ' + ext);
+    
+        res.writeHeader(200, {'content-type': mime});
+        res.write(data, 'binary');
+        res.close();
+      }
+    });
+  }
 }).listen(8000);

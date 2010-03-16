@@ -31,6 +31,23 @@ describe 'require'
     window.require.should_not.receive('fetch')
     require('test_module')
   end
+
+  describe 'pwd'
+    it 'should be empty when not inside a require'
+      require.pwd().should.equal ''
+    end
+    
+    it 'should be empty when an exception occurs inside require'
+      try {
+        require('bogus/bogus/bogus')
+      }
+      catch(e) {
+        
+      }
+      
+      require.pwd().should.equal ''
+    end
+  end
   
   describe 'fetch'
     it 'should be a function'
@@ -38,7 +55,7 @@ describe 'require'
     end
     
     it 'should throw an error on relative urls'
-      -{ require.fetch('./module') }.should.throw_error "Relative identifier loading is not yet implemented."
+      -{ require.fetch('./module') }.should.throw_error "Relative identifier fetching is not yet implemented."
     end
     
     it 'should throw an error when no valid identifier is passed'
@@ -61,22 +78,6 @@ describe 'require'
   describe 'paths'
     it 'should be an array'
       require.paths.should.be_an Array
-    end
-  end
-  
-  describe 'load'
-    it 'should be a function'
-      require.load.should.be_a Function
-    end
-    
-    it 'should eval a CommonJS module and return the exports object'
-      var test_module = require.load(fixture('test_module.js'))
-      
-      test_module.test.should.be_a Function
-      test_module.test().should.equal "Hello World!"
-      
-      test_module.this_test.should.be_a Function
-      test_module.this_test().should.equal "This is awesome!"
     end
   end
   

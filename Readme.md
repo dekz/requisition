@@ -1,7 +1,7 @@
 
 # Requisition
 
-Requisition is an implementation of a CommonJS module loader designed specifically for use in a browser environment. It aims to be 100% compliant with the [CommonJS Module Specification](http://commonjs.org/specs/modules/1.0.html "CommonJS Module Specification 1.0") whilst tailoring the implementation with the needs of a browser in mind.
+Requisition is an implementation of a CommonJS module loader designed specifically for use in a browser environment. It is 100% compliant with the [CommonJS Module Specification](http://commonjs.org/specs/modules/1.0.html "CommonJS Module Specification 1.0") whilst tailoring the implementation with the needs of a browser in mind.
 
 ## License 
 
